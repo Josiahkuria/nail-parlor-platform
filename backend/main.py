@@ -2,7 +2,6 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from typing import List
 import datetime
@@ -15,7 +14,7 @@ SECRET_KEY = "NAIL_PARLOR_WORKSPACE_SUPER_SECRET_TOKEN_KEY"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480  # Locks authentication sessions to a standard 8-hour shift
 
-# Native OAuth2 token extractor (No passlib dependencies!)
+# Native OAuth2 token extractor
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 # ─── CRYPTOGRAPHY HELPERS (100% Native & Stable) ───
@@ -31,31 +30,6 @@ def get_password_hash(password: str) -> str:
     salt = secrets.token_hex(8)
     key = hashlib.sha256(salt.encode() + password.encode()).hexdigest()
     return f"{salt}:{key}"
-
-
-# Automatically generate tables and structure mappings inside sqlite file
-database.Base.metadata.create_all(bind=database.engine)
-
-app = FastAPI(
-    title="Nail Parlor Enterprise Management Hub",
-    description="Secure Role-Based Access Engine and Operational Automation Interface.",
-    version="3.0.0"
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ─── CRYPTOGRAPHY HELPERS ───
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -82,6 +56,22 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
     return user
 
+# Automatically generate tables and structure mappings inside sqlite file
+database.Base.metadata.create_all(bind=database.engine)
+
+app = FastAPI(
+    title="Nail Parlor Enterprise Management Hub",
+    description="Secure Role-Based Access Engine and Operational Automation Interface.",
+    version="3.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ─── 1. AUTHENTICATION & BOOTSTRAP ROUTES ───
 
