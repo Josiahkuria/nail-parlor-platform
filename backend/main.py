@@ -95,3 +95,29 @@ def get_tech_performance(tech_id: int, db: Session = Depends(database.get_db)):
             for t in transactions
         ]
     }
+
+# 5. Create a Client Booking
+@app.post("/api/v1/bookings")
+def create_booking(
+    client_name: str, 
+    client_phone: str, 
+    service_requested: str, 
+    booking_time: str, 
+    db: Session = Depends(database.get_db)
+):
+    new_booking = database.Booking(
+        client_name=client_name,
+        client_phone=client_phone,
+        service_requested=service_requested,
+        booking_time=booking_time,
+        status="Scheduled"
+    )
+    db.add(new_booking)
+    db.commit()
+    db.refresh(new_booking)
+    return new_booking
+
+# 6. Fetch All Bookings (Notion Database View style)
+@app.get("/api/v1/bookings")
+def get_bookings(db: Session = Depends(database.get_db)):
+    return db.query(database.Booking).order_by(database.Booking.booking_time.asc()).all()

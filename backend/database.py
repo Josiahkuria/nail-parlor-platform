@@ -41,3 +41,16 @@ def get_db():
         yield db
     finally:
         db.close()
+
+# ... keep all your existing imports and tables (NailTech, Transaction) exactly the same
+
+# 3. Client Bookings Table
+class Booking(Base):
+    __tablename__ = "bookings"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    client_name = Column(String, index=True)
+    client_phone = Column(String)
+    service_requested = Column(String)
+    booking_time = Column(String)  # Stored as text string for easy input mapping (e.g., "2026-07-10 14:30")
+    status = Column(String, default="Scheduled")  # 'Scheduled', 'In-Progress', 'Completed', 'Cancelled'
