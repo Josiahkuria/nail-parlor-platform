@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from typing import List
 import datetime
 import database
+import hashlib
+import secrets
 
 # ─── SECURITY CONFIGURATION ───
 # In production, change this secret key to a complex random password string!
@@ -14,8 +16,23 @@ SECRET_KEY = "NAIL_PARLOR_WORKSPACE_SUPER_SECRET_TOKEN_KEY"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480  # Locks authentication sessions to a standard 8-hour shift
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Native OAuth2 token extractor (No passlib dependencies!)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+
+# ─── CRYPTOGRAPHY HELPERS (100% Native & Stable) ───
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    try:
+        salt, key = hashed_password.split(":")
+        new_key = hashlib.sha256(salt.encode() + plain_password.encode()).hexdigest()
+        return secrets.compare_digest(key, new_key)
+    except ValueError:
+        return False
+
+def get_password_hash(password: str) -> str:
+    salt = secrets.token_hex(8)
+    key = hashlib.sha256(salt.encode() + password.encode()).hexdigest()
+    return f"{salt}:{key}"
+
 
 # Automatically generate tables and structure mappings inside sqlite file
 database.Base.metadata.create_all(bind=database.engine)
