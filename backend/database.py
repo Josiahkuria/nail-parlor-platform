@@ -3,7 +3,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import datetime
 
 # Local database file path
-DATABASE_URL = "sqlite:///./nail_parlor.db"
+DATABASE_URL = "sqlite:////tmp/nail_parlor.db"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
