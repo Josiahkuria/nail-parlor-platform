@@ -11,7 +11,6 @@ import hashlib
 import secrets
 
 # ─── SECURITY CONFIGURATION ───
-# In production, change this secret key to a complex random password string!
 SECRET_KEY = "NAIL_PARLOR_WORKSPACE_SUPER_SECRET_TOKEN_KEY"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480  # Locks authentication sessions to a standard 8-hour shift
