@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Operational Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-neutral-50 text-neutral-800 min-h-screen font-sans">
+
+    <div id="loginSection" class="flex items-center justify-center min-h-screen px-4">
+        <div class="bg-white border border-neutral-200 p-8 rounded-2xl shadow-xl max-w-md w-full">
+            <div class="mb-6 text-center">
+                <h1 class="text-xl font-bold text-neutral-900 tracking-tight">Studio Operational Hub</h1>
+                <p class="text-xs text-neutral-400 mt-1">Authentication required to establish a secure session</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Username</label>
+                    <input type="text" id="loginUsername" placeholder="Username" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md focus:outline-none" required>
+                </div>
+                <div id="loginError" class="text-xs text-red-500 hidden font-medium"></div>
+                <button type="submit" class="w-full bg-neutral-900 text-white text-sm font-bold py-2.5 rounded-md hover:bg-neutral-800 transition">Establish Session</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="adminDashboardSection" class="hidden max-w-6xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8 border-b border-neutral-200 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-neutral-900 tracking-tight">Nail Parlor Executive Hub</h1>
+                <p class="text-xs text-neutral-400 mt-0.5">Master Operational Logs and Financial Matrix</p>
+            </div>
+            <button class="logoutBtn text-xs font-bold text-neutral-400 hover:text-red-500 transition uppercase tracking-wider border border-neutral-200 px-3 py-1.5 rounded-md bg-white">Terminate Session</button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="space-y-4">
+                <div class="bg-white border border-neutral-200 p-6 rounded-2xl shadow-sm h-fit">
+                    <h2 class="text-sm font-bold text-neutral-900 uppercase tracking-wider mb-4 pb-2 border-b border-neutral-100">Log Administrative Entry</h2>
+                    <form id="adminServiceForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-neutral-400 font-medium mb-1">Target Tech ID</label>
+                            <input type="number" id="adminTechId" placeholder="e.g., 1" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md font-mono" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-neutral-400 font-medium mb-1">Client Name</label>
+                            <input type="text" id="adminClientName" placeholder="Customer name" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-neutral-400 font-medium mb-1">Service Rendered</label>
+                            <input type="text" id="adminServiceName" placeholder="e.g., Gel Extension" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-neutral-400 font-medium mb-1">Total Charged (KSh)</label>
+                            <input type="number" id="adminTotalCharged" placeholder="2500" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md font-mono" required>
+                        </div>
+                        <button type="submit" class="w-full bg-neutral-900 text-white text-xs font-bold py-2 rounded-md hover:bg-neutral-800 transition uppercase tracking-wider mt-2">Commit Entry</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 space-y-8">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white border border-neutral-200 p-4 rounded-xl shadow-sm"><span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Gross Volume</span><span id="grossRevenue" class="text-lg font-bold text-neutral-900 mt-1 font-mono">KSh 0</span></div>
+                    <div class="bg-white border border-neutral-200 p-4 rounded-xl shadow-sm"><span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Tech Payouts (40%)</span><span id="techPayouts" class="text-lg font-bold text-blue-600 mt-1 font-mono">KSh 0</span></div>
+                    <div class="bg-white border border-neutral-200 p-4 rounded-xl shadow-sm"><span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Shop Net Profit (60%)</span><span id="shopProfit" class="text-lg font-bold text-emerald-600 mt-1 font-mono">KSh 0</span></div>
+                </div>
+
+                <div class="bg-white border border-neutral-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="p-4 border-b border-neutral-100 bg-neutral-50/50"><h3 class="text-xs font-bold text-neutral-500 uppercase tracking-wider">Technician Commission Splits</h3></div>
+                    <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="border-b border-neutral-200 bg-neutral-50/40 text-neutral-400 font-bold text-[10px] uppercase tracking-wider"><tr class="divide-x divide-neutral-100"><th class="py-2 px-4">Tech ID</th><th class="py-2 px-4">Name</th><th class="py-2 px-4">Services Logged</th><th class="py-2 px-4 text-blue-500">Commission Earned (40%)</th></tr></thead><tbody id="techMatrixBody" class="divide-y divide-neutral-100 text-neutral-700 font-mono text-xs"></tbody></table></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 border-t border-neutral-200 pt-6 text-center">
+            <button id="toggleRegBtn" class="text-xs font-bold text-neutral-400 hover:text-neutral-900 transition uppercase tracking-wider underline">⚙️ Manage System Accounts</button>
+            <div id="adminManagementZone" class="hidden mt-6 bg-white border border-neutral-200 p-6 rounded-2xl shadow-md max-w-md mx-auto text-left">
+                <h2 class="text-sm font-bold text-neutral-900 uppercase tracking-wider mb-4 pb-2 border-b border-neutral-100">Add New Technician Account</h2>
+                <form id="techRegistrationForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-neutral-400 font-medium mb-1">System Username</label>
+                        <input type="text" id="newTechUsername" placeholder="e.g., lucy_nails" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-neutral-400 font-medium mb-1">Full Name</label>
+                        <input type="text" id="newTechFullName" placeholder="e.g., Lucy Wanjiku" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-neutral-400 font-medium mb-1">Access Password</label>
+                        <input type="password" id="newTechPassword" placeholder="••••••••" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md" required>
+                    </div>
+                    <div id="registrationFeedback" class="text-xs hidden font-medium"></div>
+                    <button type="submit" class="w-full bg-blue-600 text-white text-xs font-bold py-2 rounded-md hover:bg-blue-700 transition uppercase tracking-wider mt-2">Generate Tech Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="techDashboardSection" class="hidden max-w-4xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8 border-b border-neutral-200 pb-4">
+            <div>
+                <h1 id="techWelcomeTitle" class="text-2xl font-bold text-neutral-900 tracking-tight">Welcome</h1>
+                <p id="techSubtitle" class="text-xs text-neutral-400 mt-0.5">Personal Commission Portal</p>
+            </div>
+            <button class="logoutBtn text-xs font-bold text-neutral-400 hover:text-red-500 transition uppercase tracking-wider border border-neutral-200 px-3 py-1.5 rounded-md bg-white">Exit Portal</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="md:col-span-1">
+                <div class="bg-white border border-neutral-200 p-6 rounded-2xl shadow-sm h-fit">
+                    <h2 class="text-sm font-bold text-neutral-900 uppercase tracking-wider mb-4 pb-2 border-b border-neutral-100">Log My Work</h2>
+                    <form id="techServiceForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-neutral-400 font-medium mb-1">My Tech ID</label>
+                            <input type="number" id="lockedTechId" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md font-mono bg-neutral-100 text-neutral-400" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-neutral-400 font-medium mb-1">Client Name</label>
+                            <input type="text" id="techClientName" placeholder="Customer name" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-neutral-400 font-medium mb-1">Service Rendered</label>
+                            <input type="text" id="techServiceName" placeholder="e.g., Gel Extension" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-neutral-400 font-medium mb-1">Total Charged (KSh)</label>
+                            <input type="number" id="techTotalCharged" placeholder="2500" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md font-mono" required>
+                        </div>
+                        <button type="submit" class="w-full bg-neutral-900 text-white text-xs font-bold py-2 rounded-md hover:bg-neutral-800 transition uppercase tracking-wider mt-2">Submit Entry</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-gradient-to-br from-neutral-900 to-neutral-800 text-white p-6 rounded-2xl shadow-sm">
+                    <span class="text-xs text-neutral-400 font-bold uppercase tracking-wider block">My Earned Commission Balance (40%)</span>
+                    <span id="myPersonalCommission" class="text-3xl font-bold tracking-tight block mt-2 font-mono text-emerald-400">KSh 0</span>
+                </div>
+
+                <div class="text-center">
+                    <button id="toggleTechHistoryBtn" class="text-xs font-bold text-neutral-400 hover:text-neutral-900 transition uppercase tracking-wider underline">📊 View My Weekly Logged History</button>
+                </div>
+
+                <div id="techHistoryZone" class="hidden bg-white border border-neutral-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="p-4 border-b border-neutral-100 bg-neutral-50/50 flex justify-between items-center">
+                        <h3 class="text-xs font-bold text-neutral-500 uppercase tracking-wider">My Logged Customers (This Week)</h3>
+                        <span id="myCustomerCount" class="text-[10px] font-bold bg-neutral-200 text-neutral-600 px-2 py-0.5 rounded-full font-mono">0 Done</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="border-b border-neutral-200 bg-neutral-50/40 text-neutral-400 font-bold text-[10px] uppercase tracking-wider">
+                                <tr class="divide-x divide-neutral-100">
+                                    <th class="py-2 px-4">Client Name</th>
+                                    <th class="py-2 px-4">Service Rendered</th>
+                                    <th class="py-2 px-4 text-emerald-600">Total (KSh)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workerHistoryBody" class="divide-y divide-neutral-100 text-neutral-700 text-xs">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -53,11 +53,17 @@ class Booking(Base):
     booking_time = Column(DateTime, nullable=False)  # Saved as actual timestamp object
     status = Column(String, default="Scheduled")     # Scheduled, In-Progress, Completed, Cancelled
     
+    # ─── ADD THESE TWO LINES HERE ───
+    tech_id = Column(Integer, ForeignKey("users.id"), nullable=True) # Nullable=True allows unassigned bookings if needed
+    tech = relationship("User")
+    # ────────────────────────────────
+    
     # n8n loop uses these flags to make sure it never sends duplicate messages!
     reminded_30m = Column(Boolean, default=False)   
     reminded_30d = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
+    
 # Database session helper
 def get_db():
     db = SessionLocal()

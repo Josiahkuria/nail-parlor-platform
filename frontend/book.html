@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Appointment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F7F7F5; /* Notion Canvas Background */
+        }
+    </style>
+</head>
+<body class="text-neutral-800 antialiased min-h-screen flex flex-col justify-between pb-12">
+
+    <!-- Simple Page Container -->
+    <div class="max-w-md w-full mx-auto pt-20 px-6">
+        
+        <!-- Notion Style Header -->
+        <div class="relative mb-8">
+            <div class="text-6xl select-none absolute -top-16 left-0">✨</div>
+            <h1 class="text-3xl font-bold tracking-tight text-neutral-900 mt-4">Book an Appointment</h1>
+            <p class="text-neutral-500 mt-2 text-sm">Select your treatment and lock in your session instantly.</p>
+        </div>
+
+        <!-- Public Booking Form -->
+        <div class="bg-white border border-neutral-200 rounded-xl p-6 shadow-sm">
+            <form id="publicBookingForm" class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-semibold text-neutral-500 uppercase tracking-wider mb-1">Your Full Name</label>
+                    <input type="text" id="clientName" placeholder="e.g., Mama Stacy" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md focus:outline-none focus:border-neutral-400" required>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-neutral-500 uppercase tracking-wider mb-1">Phone Number</label>
+                    <input type="tel" id="clientPhone" placeholder="e.g., 0712345678" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md focus:outline-none focus:border-neutral-400 font-mono" required>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-neutral-500 uppercase tracking-wider mb-1">Treatment / Service</label>
+                    <input type="text" id="serviceRequested" placeholder="e.g., Acrylic Full Set & Gel" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md focus:outline-none focus:border-neutral-400" required>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-neutral-500 uppercase tracking-wider mb-1">Preferred Date & Time</label>
+                    <input type="datetime-local" id="bookingTime" class="w-full text-sm px-3 py-2 border border-neutral-200 rounded-md focus:outline-none focus:border-neutral-400 text-neutral-600 font-mono" required>
+                </div>
+                
+                <button type="submit" id="submitBtn" class="w-full bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold py-3 px-4 rounded-md shadow-sm transition-all active:scale-[0.99] mt-2">
+                    Confirm Booking
+                </button>
+            </form>
+
+            <!-- Inline Success State Message -->
+            <div id="successMessage" class="hidden text-center py-4 space-y-2">
+                <div class="text-4xl">✅</div>
+                <h3 class="font-bold text-neutral-900">Booking Confirmed!</h3>
+                <p class="text-xs text-neutral-500">We've received your details and saved your slot. See you then!</p>
+                <button onclick="window.location.reload()" class="text-xs text-neutral-400 underline mt-4 block mx-auto hover:text-neutral-600">Book another slot</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimalist Footer -->
+    <footer class="text-center text-[11px] text-neutral-400 mt-12">
+        Powered by Nail Parlor Workspace
+    </footer>
+
+    <!-- JavaScript Controller -->
+    <script>
+        const API_BASE_URL = "http://192.168.100.65:8000/api/v1";
+
+        document.getElementById("publicBookingForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById("submitBtn");
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            const name = document.getElementById("clientName").value;
+            const phone = document.getElementById("clientPhone").value;
+            const service = document.getElementById("serviceRequested").value;
+            const time = document.getElementById("bookingTime").value;
+
+            const submitUrl = `${API_BASE_URL}/bookings?client_name=${encodeURIComponent(name)}&client_phone=${encodeURIComponent(phone)}&service_requested=${encodeURIComponent(service)}&booking_time=${encodeURIComponent(time)}`;
+
+            try {
+                const response = await fetch(submitUrl, { method: "POST" });
+                if (response.ok) {
+                    // Hide form and show pristine success message
+                    document.getElementById("publicBookingForm").classList.add("hidden");
+                    document.getElementById("successMessage").classList.remove("hidden");
+                } else {
+                    alert("Something went wrong. Please check your details and try again.");
+                    btn.innerText = "Confirm Booking";
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                console.error("Booking Error:", error);
+                alert("Could not connect to the booking server.");
+                btn.innerText = "Confirm Booking";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

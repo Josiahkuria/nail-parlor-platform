@@ -201,8 +201,8 @@ def get_isolated_tech_metrics(current_user: database.User = Depends(get_current_
 # ─── 4. UNPROTECTED PUBLIC BOOKINGS NODE ───
 
 @app.post("/api/v1/public/bookings", tags=["Public Client Bookings"])
-def create_public_booking(client_name: str, client_phone: str, service_requested: str, booking_time_iso: str, db: Session = Depends(database.get_db)):
-    """Public appointment gateway. Accepts standard ISO timestamp strings with zero login barriers."""
+def create_public_booking(client_name: str, client_phone: str, service_requested: str, booking_time_iso: str, target_tech_id: int = None, db: Session = Depends(database.get_db)):
+    """Public appointment gateway. Accepts standard ISO timestamp strings and an optional target_tech_id for AI/n8n sorting."""
     try:
         parsed_time = datetime.datetime.fromisoformat(booking_time_iso)
     except ValueError:
@@ -212,10 +212,12 @@ def create_public_booking(client_name: str, client_phone: str, service_requested
         client_name=client_name,
         client_phone=client_phone,
         service_requested=service_requested,
-        booking_time=parsed_time
+        booking_time=parsed_time,
+        tech_id=target_tech_id  # Maps the booking straight to the tech's unique user ID
     )
     db.add(new_booking)
     db.commit()
+    db.refresh(new_booking)
     return {"status": "Confirmed", "booking_id": new_booking.id}
 
 @app.get("/api/v1/operations/bookings", tags=["Shared Schedules Feed"])
@@ -225,6 +227,14 @@ def get_shared_appointments(current_user: database.User = Depends(get_current_us
         database.Booking.booking_time >= datetime.datetime.utcnow() - datetime.timedelta(hours=4)
     ).order_by(database.Booking.booking_time.asc()).all()
 
+@app.get("/api/v1/automation/get-tech-id", tags=["n8n Automation Pipeline"])
+def lookup_tech_id_by_name(name_query: str, db: Session = Depends(database.get_db)):
+    """n8n uses this to turn a text name like 'Lucy' or 'Boss' from WhatsApp into a real tech_id."""
+    all_users = db.query(database.User).all()
+    for u in all_users:
+        if name_query.lower() in u.full_name.lower() or name_query.lower() in u.username.lower():
+            return {"found": True, "tech_id": u.id, "full_name": u.full_name}
+    raise HTTPException(status_code=404, detail=f"No technician matching '{name_query}' found.")
 
 # ─── 5. BACKGROUND AUTOMATION ENGINE FOR n8n WHATSAPP LOOPS ───
 
